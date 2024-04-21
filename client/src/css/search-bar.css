@@ -1,0 +1,8 @@
+#search-bar {
+    width: 750px;
+}
+
+#search-form {
+    gap: 10px;
+    flex: 1;
+}
