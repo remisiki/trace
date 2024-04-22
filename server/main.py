@@ -110,7 +110,7 @@ async def query(keywords: str) -> dict:
             "news": [x.toJson() for x in news],
         }
     except Exception as err:
-        response["status"] = "error"
+        response = {"status": "error"}
         logger.error(f"Error querying keywords {keywords}: {err}")
         logger.error(traceback.format_exc())
     finally:
