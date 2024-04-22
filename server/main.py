@@ -21,8 +21,8 @@ from src.NewsFactory import NewsFactory
 from src.TrendSummarizer import TrendSummarizer
 
 CACHE_EXPIRE_SECONDS = int(os.getenv("CACHE_EXPIRE_SECONDS", "86400"))
-QUERY_LIMIT_RATE = int(os.getenv("QUERY_LIMIT_RATE", "10"))
-AUTOCOMPLETE_LIMIT_RATE = int(os.getenv("AUTOCOMPLETE_LIMIT_RATE", "60"))
+QUERY_LIMIT_RATE = int(os.getenv("QUERY_LIMIT_RATE", "16"))
+AUTOCOMPLETE_LIMIT_RATE = int(os.getenv("AUTOCOMPLETE_LIMIT_RATE", "256"))
 
 
 class StartupModel:
