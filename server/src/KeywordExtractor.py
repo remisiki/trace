@@ -24,8 +24,10 @@ class KeywordExtractor:
         Returns:
             List of keywords tuples as (text, score)
         """
-        # Join all titles into one string
-        text = ".".join([a.title for a in articles])
-        # Use keybert model to extract top 10 keywords
-        results = self.model.extract_keywords(text, top_n=10)
+        results = []
+        if len(articles) > 0:
+            # Join all titles into one string
+            text = ".".join([a.title for a in articles])
+            # Use keybert model to extract top 10 keywords
+            results = self.model.extract_keywords(text, top_n=10)
         return results

@@ -1,16 +1,21 @@
 # Test your FastAPI endpoints
 
-GET http://127.0.0.1:8000/query?keywords=computer+vision
-Content-Type: application/json
+###
+# Test for normal query
+
+GET http://127.0.0.1:8000/api/query?keywords=computer+vision
 
 ###
+# Test for query with only one article result
 
-GET https://mirai.remisiki.com/trace/api
-
-###
-
-GET https://mirai.remisiki.com/trace/api/query?keywords=computer+vision
+GET http://127.0.0.1:8000/api/query?keywords=meshlrm
 
 ###
+# Test for query with no results
 
-GET http://127.0.0.1:8000/complete?keywords=computer+vision
+GET http://127.0.0.1:8000/api/query?keywords=thisisabadquery
+
+###
+#Test for autocomplete
+
+GET http://127.0.0.1:8000/api/complete?keywords=computer+vision

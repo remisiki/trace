@@ -31,19 +31,26 @@ class ArticleFactory:
         response = requests.get(url).text
         # Parse xml response
         obj = xmltodict.parse(response)
-        articles = obj["feed"]["entry"]
-        articles = [
-            Article(
-                x["published"],
-                x["title"],
-                x["summary"],
-                x["id"],
-                (
-                    [a["name"] for a in x["author"]]
-                    if isinstance(x["author"], list)
-                    else [x["author"]["name"]]
-                ),
-            )
-            for x in articles
-        ]
+        articles = []
+        if "feed" in obj and "entry" in obj["feed"]:
+            entries = obj["feed"]["entry"]
+            # When only one article is present, make it a list
+            if not isinstance(entries, list):
+                articles = [entries]
+            else:
+                articles = entries.copy()
+            articles = [
+                Article(
+                    x["published"],
+                    x["title"],
+                    x["summary"],
+                    x["id"],
+                    (
+                        [a["name"] for a in x["author"]]
+                        if isinstance(x["author"], list)
+                        else [x["author"]["name"]]
+                    ),
+                )
+                for x in articles
+            ]
         return articles

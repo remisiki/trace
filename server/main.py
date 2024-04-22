@@ -1,3 +1,5 @@
+import logging
+import traceback
 from contextlib import asynccontextmanager
 from typing import *
 
@@ -42,6 +44,12 @@ class StartupModel:
 # Set up startup model
 models = StartupModel()
 
+# Set up global uvicorn logger format
+logger = logging.getLogger("uvicorn.access")
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+for handler in logger.handlers:
+    handler.setFormatter(formatter)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -81,22 +89,32 @@ async def query(keywords: str) -> dict:
         keywords (str): query keyword
 
     """
-    # Fetch at most 1000 articles
-    articles = ArticleFactory.create(keywords, count=1000)
-    # Fetch 10 news
-    news = models.newsFactory.create(keywords, count=10)
-    results = {
-        "query": keywords,
-        # Keyword extractor
-        "keywords": models.keybert.do(articles),
-        # Trend summarizer
-        "trend": TrendSummarizer.do(articles),
-        # List of articles
-        "articles": [x.toJson() for x in articles[:10]],
-        # List of news
-        "news": [x.toJson() for x in news],
-    }
-    return {"status": "ok", "result": results}
+    response = {"status": "ok"}
+    try:
+        # Fetch at most 1000 articles
+        articles = ArticleFactory.create(keywords, count=1000)
+        # Fetch 10 news
+        news = models.newsFactory.create(keywords, count=10)
+        # If no articles found
+        if len(articles) == 0:
+            response["status"] = "empty"
+        response["result"] = {
+            "query": keywords,
+            # Keyword extractor
+            "keywords": models.keybert.do(articles),
+            # Trend summarizer
+            "trend": TrendSummarizer.do(articles),
+            # List of articles
+            "articles": [x.toJson() for x in articles[:10]],
+            # List of news
+            "news": [x.toJson() for x in news],
+        }
+    except Exception as err:
+        response["status"] = "error"
+        logger.error(f"Error querying keywords {keywords}: {err}")
+        logger.error(traceback.format_exc())
+    finally:
+        return response
 
 
 @app.get("/api/complete")
