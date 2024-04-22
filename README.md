@@ -34,6 +34,40 @@ docker run -d --name trace -p 8000:8000 --env-file .env akiyiwen/trace:latest
 
 To specify the application host port, change the parameter after `-p` to be `${your port}:8000`. Do not change the second port value. The webpage is default hosted at `/trace`, so you can go to `http://localhost:8000/trace` to view the app. You can also host the docker container behind another server and visit through the public url.
 
+Change the environment variables to customize server behaviors
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Variable name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Default value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row"><code>NEWS_API_KEY</code></th>
+            <td>Api key to access news api</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <th scope="row"><code>CACHE_EXPIRE_SECONDS</code></th>
+            <td>Life cycle of cache, expires in specified seconds</td>
+            <td><code>86400</code></td>
+        </tr>
+        <tr>
+            <th scope="row"><code>QUERY_LIMIT_RATE</code></th>
+            <td>Global limit rate every minute for querying trends</td>
+            <td><code>16</code></td>
+        </tr>
+        <tr>
+            <th scope="row"><code>AUTOCOMPLETE_LIMIT_RATE</code></th>
+            <td>Global limit rate every minute for autocomplete</td>
+            <td><code>256</code></td>
+        </tr>
+    </tbody>
+</table>
+
 ### Manual build
 
 Clone the source code from GitHub:
