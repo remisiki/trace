@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import Loading from "./Loading";
 import Results from "./Results";
 import { AppStateContext } from "../providers/AppStateProvider";
+import ErrorPage from "./ErrorPage";
 
 /**
  * Main panel
@@ -22,7 +23,7 @@ const Main = () => {
           <Results />
         </main>
       ) : (
-        <></>
+        <ErrorPage />
       )}
     </>
   );

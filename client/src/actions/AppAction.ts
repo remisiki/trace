@@ -5,7 +5,7 @@ import ApiData from "../types/ApiData";
  */
 export type AppAction =
   // Update api data
-  | { type: "setData"; payload: ApiData }
+  | { type: "setData"; payload?: ApiData }
   // Update query string
   | { type: "setQuery"; payload: string }
   // Set is searching

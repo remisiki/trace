@@ -17,33 +17,46 @@ namespace Api {
   /**
    * Parse raw query response into wrapped api data object
    * @param json Raw response
+   * @return Data, when error return undefined
    */
-  const parseData = (json: RawResponse): ApiData => {
-    // Normalize scores for better word cloud size
-    const normalizedKeywordScores = Utils.normalize(
-      json.result.keywords.map((x) => x[1]),
-      5,
-      25,
-    );
-    return {
-      query: json.result.query,
-      keywords: json.result.keywords.map((x, i) => {
-        return {
-          text: x[0],
-          value: normalizedKeywordScores[i],
-        };
-      }),
-      percentiles: json.result.trend.percentiles.map((x) => {
-        return {
-          period: x[0],
-          count: x[1],
-        };
-      }),
-      rangeX: json.result.trend.range.x,
-      rangeY: json.result.trend.range.y,
-      articles: json.result.articles,
-      news: json.result.news,
-    };
+  const parseData = (json: RawResponse): ApiData | undefined => {
+    let data: ApiData | undefined = undefined;
+    switch (json.status) {
+      case "ok":
+        if (json.result) {
+          // Normalize scores for better word cloud size
+          const normalizedKeywordScores = Utils.normalize(
+            json.result.keywords.map((x) => x[1]),
+            5,
+            25,
+          );
+          data = {
+            query: json.result.query,
+            keywords: json.result.keywords.map((x, i) => {
+              return {
+                text: x[0],
+                value: normalizedKeywordScores[i],
+              };
+            }),
+            percentiles: json.result.trend.percentiles.map((x) => {
+              return {
+                period: x[0],
+                count: x[1],
+              };
+            }),
+            rangeX: json.result.trend.range.x,
+            rangeY: json.result.trend.range.y,
+            articles: json.result.articles,
+            news: json.result.news,
+          };
+        }
+        break;
+      case "error":
+      case "empty":
+      default:
+        break;
+    }
+    return data;
   };
 
   /**

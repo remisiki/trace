@@ -182,10 +182,8 @@ const SearchBar = () => {
       // FIXME Error handler
       Api.fetchData(query)
         .then((apiData) => {
-          if (apiData) {
-            // Update data
-            appDispatch({ type: "setData", payload: apiData });
-          }
+          // Update data
+          appDispatch({ type: "setData", payload: apiData });
         })
         .finally(() => {
           // Stop searching

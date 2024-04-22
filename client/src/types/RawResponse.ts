@@ -7,7 +7,7 @@ import News from "./News";
 type RawResponse = {
   // Status of ok or not
   status: string;
-  result: {
+  result?: {
     // Query string
     query: string;
     // Extracted keywords with scores
