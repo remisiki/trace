@@ -1,4 +1,5 @@
 import logging
+import os
 import traceback
 from contextlib import asynccontextmanager
 from typing import *
@@ -19,10 +20,9 @@ from src.KeywordExtractor import KeywordExtractor
 from src.NewsFactory import NewsFactory
 from src.TrendSummarizer import TrendSummarizer
 
-# FIXME Make this env var
-CACHE_EXPIRE_SECONDS = 86400
-QUERY_LIMIT_RATE = 1
-AUTOCOMPLETE_LIMIT_RATE = 60
+CACHE_EXPIRE_SECONDS = int(os.getenv("CACHE_EXPIRE_SECONDS", "86400"))
+QUERY_LIMIT_RATE = int(os.getenv("QUERY_LIMIT_RATE", "10"))
+AUTOCOMPLETE_LIMIT_RATE = int(os.getenv("AUTOCOMPLETE_LIMIT_RATE", "60"))
 
 
 class StartupModel:
