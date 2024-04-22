@@ -1,6 +1,7 @@
 import ApiData from "../types/ApiData";
 import RawResponse from "../types/RawResponse";
 import Utils from "../common/Utils";
+import { BaseException } from "./BaseException";
 
 /**
  * Api wrapper
@@ -61,16 +62,24 @@ namespace Api {
 
   /**
    * Fetch query results
-   * FIXME Error handler
    * @param keyword
    */
   export const fetchData = async (keyword?: string) => {
     if (keyword) {
       const params = { keywords: keyword };
       const query = new URLSearchParams(params);
-      const response = await fetch(`${endPoint}/query?${query}`);
-      const json = (await response.json()) as RawResponse;
-      return parseData(json);
+      try {
+        const response = await fetch(`${endPoint}/query?${query}`);
+        if (response.status !== 200) {
+          throw new NetworkStatusNotOkException(response.status);
+        } else {
+          const json = (await response.json()) as RawResponse;
+          return parseData(json);
+        }
+      } catch (err) {
+        console.error(err);
+        return undefined;
+      }
     } else {
       return undefined;
     }
@@ -78,7 +87,6 @@ namespace Api {
 
   /**
    * Fetch auto completion
-   * FIXME Error handler
    * @param keyword
    */
   export const fetchComplete = async (
@@ -87,12 +95,30 @@ namespace Api {
     if (keyword) {
       const params = { keywords: keyword };
       const query = new URLSearchParams(params);
-      const response = await fetch(`${endPoint}/complete?${query}`);
-      return response.json();
+      try {
+        const response = await fetch(`${endPoint}/complete?${query}`);
+        if (response.status !== 200) {
+          throw new NetworkStatusNotOkException(response.status);
+        } else {
+          return response.json();
+        }
+      } catch (err) {
+        console.error(err);
+        return undefined;
+      }
     } else {
       return undefined;
     }
   };
+
+  /**
+   * Exception when network response status is not 200
+   */
+  export class NetworkStatusNotOkException extends BaseException {
+    constructor(statusCode: number) {
+      super(`Fetch data failed with status code ${statusCode}`);
+    }
+  }
 }
 
 export default Api;

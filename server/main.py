@@ -3,10 +3,13 @@ import traceback
 from contextlib import asynccontextmanager
 from typing import *
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.decorator import cache
+from slowapi import Limiter
+from slowapi.errors import RateLimitExceeded
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
@@ -18,6 +21,8 @@ from src.TrendSummarizer import TrendSummarizer
 
 # FIXME Make this env var
 CACHE_EXPIRE_SECONDS = 86400
+QUERY_LIMIT_RATE = 1
+AUTOCOMPLETE_LIMIT_RATE = 60
 
 
 class StartupModel:
@@ -76,17 +81,44 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+def rateLimitExceedHandler(request: Request, exc: HTTPException) -> JSONResponse:
+    """
+    Handle rate limit exceed
+
+    Args:
+        request (Request): Raw request
+        exc (HTTPException): Exception
+
+    Returns:
+        JSON response
+    """
+    return JSONResponse(
+        status_code=429,
+        content={"message": "Too many requests. Please try again later."},
+    )
+
+
+# Add limiter to work globally
+limiter = Limiter(
+    key_func=lambda: "global",
+)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rateLimitExceedHandler)
+
 # Routes
 
 
 @app.get("/api/query")
+@limiter.limit(f"{QUERY_LIMIT_RATE}/minute")
 @cache(expire=CACHE_EXPIRE_SECONDS)
-async def query(keywords: str) -> dict:
+async def query(keywords: str, request: Request) -> dict:
     """
     Request query summary results
 
     Args:
         keywords (str): query keyword
+        request (Request): Request object
 
     """
     response = {"status": "ok"}
@@ -118,13 +150,15 @@ async def query(keywords: str) -> dict:
 
 
 @app.get("/api/complete")
+@limiter.limit(f"{AUTOCOMPLETE_LIMIT_RATE}/minute")
 @cache(expire=CACHE_EXPIRE_SECONDS)
-async def complete(keywords: str) -> list[str]:
+async def complete(keywords: str, request: Request) -> list[str]:
     """
     Request autocomplete
 
     Args:
         keywords (str): query keyword
+        request (Request): Request object
 
     Returns:
         List of options
