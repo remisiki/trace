@@ -3,6 +3,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import theme from "../theme/Theme";
 import Logo from "./Logo";
+import GithubLinkButton from "./buttons/GithubLinkButton";
 
 /**
  * Header
@@ -24,10 +25,17 @@ const Header = () => {
           pl: 2,
         }}
       >
+        {/* Left logo */}
         <Logo variant={"h4"} sx={{ flex: 1 }} />
+        {/* Search bar */}
         <SearchBar />
-        {/* Right dummy padding */}
-        <div style={{ flex: 1 }}></div>
+        {/* Right button bar */}
+        <Box
+          sx={{ flex: 1, justifyContent: "flex-end" }}
+          className={"row-flex align-items-center"}
+        >
+          <GithubLinkButton sx={{ mr: 1 }} />
+        </Box>
       </Box>
     </header>
   );
