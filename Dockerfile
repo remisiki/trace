@@ -4,7 +4,7 @@ COPY ./client/src ./src
 COPY ./client/public ./public
 COPY ./client/package.json ./
 COPY ./client/tsconfig.json ./
-RUN yarn install
+RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn install
 RUN yarn build
 
 FROM --platform=linux/arm64 python:3.11
