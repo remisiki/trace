@@ -32,7 +32,7 @@ Alternatively, you can save the api key in `.env` file and run:
 docker run -d --name trace -p 8000:8000 --env-file .env akiyiwen/trace:latest
 ```
 
-To specify the application host port, change the parameter after `-p` to be `${your port}:8000`. Do not change the second port value. Then webpage is default hosted at `/trace`, so you can go to `http://localhost:8000/trace` to view the app. You can also host the docker container behind another server and visit through the public url.
+To specify the application host port, change the parameter after `-p` to be `${your port}:8000`. Do not change the second port value. The webpage is default hosted at `/trace`, so you can go to `http://localhost:8000/trace` to view the app. You can also host the docker container behind another server and visit through the public url.
 
 ### Manual build
 
@@ -70,7 +70,7 @@ cd server
 pip3 install --no-cache-dir --upgrade -r ./requirements.txt
 ```
 
-After installation of both frontend and backend is installed, run the server:
+After installation of both frontend and backend is success, run the server:
 
 ```bash
 cd server
